@@ -27,7 +27,7 @@ Also, includes SonarCloud integration.
 </PropertyGroup>
 ```
 
-## Commands
+## Commandss
 
 - `dotnet test -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput=../TestResults`
 - `dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.8.6`
