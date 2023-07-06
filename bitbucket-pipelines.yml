@@ -1,25 +1,26 @@
 image: mcr.microsoft.com/dotnet/sdk:7.0 # Choose an image matching your project needs
 pipelines:
-  default:
-    - parallel:
-        - step:
-            name: &build-test-sonarcloud
-            caches:
-              - dotnetcore
-            script:
-              - apt-get update
-              - apt-get install --yes --force-yes
-              - apt-get install -y openjdk-11-jre
-              - dotnet restore
-              - dotnet build --no-restore --configuration Release
-              - pipe: sonarsource/sonarcloud-scan:1.4.0
-        - step: &check-quality-gate-sonarcloud
-            name: Check the Quality Gate on SonarCloud
-            script:
-              - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
-#              - dotnet tool install --global dotnet-sonarscanner
-#              - dotnet sonarscanner begin /k:"xxx_x/d:"sonar.host.url=https://sonarcloud.io"  /d:sonar.login="${SONAR_TOKEN}" /o:"xxx"             
-#              - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"  
+ definitions:
+  caches:
+    sonar: ~/.sonar/cache  # Caching SonarCloud artifacts will speed up your build
+  services:
+    docker:
+      memory: 1024  #increasing docker service memory
+  steps:
+  - step: &build-test-sonarcloud
+      name: Build, test and analyze on SonarCloud
+      size: 2x
+      caches:
+        - sonar
+      script:
+        - pipe: sonarsource/sonarcloud-scan:1.4.0
+          variables:
+             DEBUG: "true"
+             EXTRA_ARGS: '-Dsonar.host.url=https://sonarcloud.io'   
+  - step: &check-quality-gate-sonarcloud
+      name: Check the Quality Gate on SonarCloud
+      script:
+        - pipe: sonarsource/sonarcloud-quality-gate:0.1.4  
   branches:
     master:
        - step:
