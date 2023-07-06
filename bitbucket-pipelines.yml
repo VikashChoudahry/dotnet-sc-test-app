@@ -13,10 +13,10 @@ pipelines:
               - dotnet restore
               - dotnet build --no-restore --configuration Release
               - pipe: sonarsource/sonarcloud-scan:1.4.0
-#        - step: &check-quality-gate-sonarcloud
-#            name: Check the Quality Gate on SonarCloud
-#            script:
-#              - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
+        - step: &check-quality-gate-sonarcloud
+            name: Check the Quality Gate on SonarCloud
+            script:
+              - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
 #              - dotnet tool install --global dotnet-sonarscanner
 #              - dotnet sonarscanner begin /k:"xxx_x/d:"sonar.host.url=https://sonarcloud.io"  /d:sonar.login="${SONAR_TOKEN}" /o:"xxx"             
 #              - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"  
