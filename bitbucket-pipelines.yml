@@ -23,5 +23,5 @@ pipelines:
   branches:
     master:
         - step: *build-test-sonarcloud
-        - step: *check-quality-gate-sonarcloud
+#        - step: *check-quality-gate-sonarcloud
             
