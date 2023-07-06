@@ -9,7 +9,7 @@ pipelines:
             - docker
           script:
             - apt-get update
-            - apt-get install --yes --force-yes openjdk-8-jre
+            - apt-get install --yes --force-yes openjdk-11-jre
             - export PATH="$PATH:/root/.dotnet/tools"
             - dotnet tool install --global dotnet-sonarscanner
             - dotnet sonarscanner begin /k:"project.key" /d:"sonar.login=${SONAR_TOKEN}" /o:"organization-name" /v:"${BITBUCKET_COMMIT}" /d:"sonar.host.url=https://sonarcloud.io"
