@@ -1,0 +1,35 @@
+image: microsoft/dotnet:sdk
+
+pipelines:
+  branches:
+    "{sonarcloud}":
+      - step:
+          name: Running SonarCloud Analysis
+          services:
+            - docker
+          script:
+            - apt-get update
+            - apt-get install --yes --force-yes openjdk-8-jre
+            - export PATH="$PATH:/root/.dotnet/tools"
+            - dotnet tool install --global dotnet-sonarscanner
+            - dotnet sonarscanner begin /k:"project.key" /d:"sonar.login=${SONAR_TOKEN}" /o:"organization-name" /v:"${BITBUCKET_COMMIT}" /d:"sonar.host.url=https://sonarcloud.io"
+            - dotnet build App.sln
+            - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"
+  pull-requests:
+      '**': #this runs as default for any branch not elsewhere defined in this script
+      - step:
+          name: Running SonarCloud Analysis
+          services:
+            - docker
+          script:
+            - apt-get update
+            - apt-get install --yes --force-yes openjdk-8-jre
+            - export PATH="$PATH:/root/.dotnet/tools"
+            - dotnet tool install --global dotnet-sonarscanner
+            - dotnet sonarscanner begin /k:"project.key" /d:"sonar.login=${SONAR_TOKEN}" /o:"organization-name" /v:"${BITBUCKET_COMMIT}" /d:"sonar.host.url=https://sonarcloud.io"
+            - dotnet build App.sln
+            - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"
+definitions:
+  services:
+    docker:
+      memory: 3072 # increase memory for docker-in-docker from 1GB to 3GB
