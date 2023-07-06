@@ -1,32 +1,29 @@
 image: mcr.microsoft.com/dotnet/sdk:7.0 # Choose an image matching your project needs
-
-clone:
-  depth: full              # SonarCloud scanner needs the full history to assign issues properly
-
-definitions:
-  caches:
-    sonar: ~/.sonar/cache  # Caching SonarCloud artifacts will speed up your build
-  steps:
-    - step: &build-test-sonarcloud
-        name: Build, test and analyze on SonarCloud
-        caches:
-          - dotnetcore           # See https://confluence.atlassian.com/bitbucket/caching-dependencies-895552876.html
-          - sonar
-        script:
-          - dotnet restore 
-          - dotnet build --no-restore --configuration Release
-          - pipe: sonarsource/sonarcloud-scan:1.4.0
-    - step: &check-quality-gate-sonarcloud
+pipelines:
+  default:
+    - parallel:
+        - step:
+            name: Build and No Test
+            caches:
+              - dotnetcore
+              - sonar
+            script:
+              - apt-get update
+              - apt-get install --yes --force-yes
+              - apt-get install -y openjdk-11-jre
+              - dotnet restore
+              - dotnet build --no-restore --configuration Release
+              - pipe: sonarsource/sonarcloud-scan:1.4.0
+        - step: check-quality-gate-sonarcloud
         name: Check the Quality Gate on SonarCloud
         script:
           - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
-
-pipelines:                 # More info here: https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html
+#              - dotnet tool install --global dotnet-sonarscanner
+#              - dotnet sonarscanner begin /k:"xxx_x/d:"sonar.host.url=https://sonarcloud.io"  /d:sonar.login="${SONAR_TOKEN}" /o:"xxx"             
+#              - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"
+        
   branches:
     master:
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
-  pull-requests:
-    '**':
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
+        - step: *build-test-sonarcloud
+        - step: *check-quality-gate-sonarcloud
+            
