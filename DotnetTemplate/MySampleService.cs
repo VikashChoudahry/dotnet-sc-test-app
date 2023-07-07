@@ -12,8 +12,28 @@ public static class MySampleService
 
     public static string MethodTwo()
     {
+        bool isTrue= true;
+        if(isTrue == true)  
+        {  
+            // Code  
+        }  
+        
+        if(isTrue == false)  
+        {  
+            // code  
+        }  
+        
+        bool IsBoolMethod()  
+        {  
+            return true;  
+        }  
+        
+        if(IsBoolMethod () == false)  
+        {  
+            // code  
+        } 
         string firstName = "John";
         string lastName = "Daniel";
-        return "Output from method two.";
+        // return "Output from method two.";
     }
 }
