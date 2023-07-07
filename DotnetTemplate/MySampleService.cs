@@ -35,5 +35,13 @@ public static class MySampleService
         string firstName = "John";
         string lastName = "Daniel";
         // return "Output from method two.";
+        if (x == 0)
+        {
+            DoSomething();
+        }
+        else if (x == 1)
+        {
+            DoSomethingElse();
+        }
     }
 }
